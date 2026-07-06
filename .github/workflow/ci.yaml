@@ -28,7 +28,7 @@ jobs:
         node-version: [18, 20, 22]
     defaults:
       run:
-        working-directory: nodejs-app/backend
+        working-directory: front-end
     steps:
       - name: Checkout do código
         uses: actions/checkout@v4
@@ -99,4 +99,3 @@ jobs:
         id: deployment
         uses: <a href="mailto:actions/deploy-pages@v4" rel="noreferrer noopener" title="mailto:actions/deploy-pages@v4" target="_blank">actions/deploy-pages@v4</a>
 
-        
