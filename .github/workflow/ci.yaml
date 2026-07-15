@@ -5,12 +5,12 @@ on:
   push:
     branches: [main]
     paths:
-      - "front-end/**"
-      - ".github/workflows/ci.yaml"
+      - "frontend/**"
+      - "backend/**"
   pull_request:
     paths:
-      - "front-end/**"
-      - ".github/workflows/ci.yaml"
+      - "frontend/**"
+      - "backend/**"
 
 # Permissões necessárias para publicar imagem no GitHub Container Registry (ghcr.io).
 permissions:
@@ -28,7 +28,7 @@ jobs:
         node-version: [18, 20, 22]
     defaults:
       run:
-        working-directory: front-end
+        working-directory: backend
     steps:
       - name: Checkout do código
         uses: actions/checkout@v4
@@ -46,8 +46,8 @@ jobs:
 
       - name: Rodar testes
         run: npm test
- 
-   # ---------- 2. BUILD + PUSH DA IMAGEM DOCKER ----------
+
+  # ---------- 2. BUILD + PUSH DA IMAGEM DOCKER ----------
   # Só roda depois dos testes passarem e apenas em push na main.
   docker:
     name: Build e push da imagem Docker
@@ -65,13 +65,21 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # - name: Build e push do backend
-      #   uses: docker/build-push-action@v6
-      #   with:
-      #     context: nodejs-app/backend
-      #     push: true
-      #     tags: ghcr.io/${{ github.repository }}/node-backend:latest
-   # ---------- 3. DEPLOY DO FRONTEND (GitHub Pages) ----------
+      - name: Build e push do backend
+        uses: docker/build-push-action@v6
+        with:
+          context: backend
+          push: true
+          tags: ghcr.io/${{ github.repository }}/node-backend:latest
+
+      - name: Build e push do frontend
+        uses: docker/build-push-action@v6
+        with:
+          context: frontend
+          push: true
+          tags: ghcr.io/${{ github.repository }}/node-frontend:latest
+
+  # ---------- 3. DEPLOY DO FRONTEND (GitHub Pages) ----------
   deploy:
     name: Deploy do frontend no GitHub Pages
     needs: test
@@ -93,9 +101,8 @@ jobs:
       - name: Enviar artefato (pasta do frontend)
         uses: actions/upload-pages-artifact@v3
         with:
-          path: front-end
+          path: frontend
 
       - name: Publicar no Pages
         id: deployment
         uses: <a href="mailto:actions/deploy-pages@v4" rel="noreferrer noopener" title="mailto:actions/deploy-pages@v4" target="_blank">actions/deploy-pages@v4</a>
-
