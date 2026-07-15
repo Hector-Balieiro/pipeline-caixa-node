@@ -5,6 +5,8 @@ const form = document.getElementById("form");
 const input = document.getElementById("mensagem");
 const resposta = document.getElementById("resposta");
 
+
+
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
 
