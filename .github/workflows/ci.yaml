@@ -18,7 +18,7 @@ permissions:
   packages: write
 
 jobs:
-  # ---------- 1. LINT + TESTES (com matrix de versões) ----------
+   # ---------- 1. LINT + TESTES (com matrix de versões) ----------
   test:
     name: Lint e testes (Node ${{ matrix.node-version }})
     runs-on: ubuntu-latest
@@ -106,4 +106,3 @@ jobs:
       - name: Publicar no Pages
         id: deployment
         uses: actions/deploy-pages@v4
-        
